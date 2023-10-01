@@ -6,9 +6,10 @@ const Schema = mongoose.Schema; // Obtém o construtor de esquema do mongoose
 const invoiceSchema = new Schema({
   client: [
     {
-      name: { type: String, required: true }, // Nome do cliente (obrigatório)
-      cpf: { type: String, required: true } // CPF do cliente (obrigatório)
-    }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Products",
+      require: true,
+    },
   ],
 
   purchase: [
@@ -20,6 +21,5 @@ const invoiceSchema = new Schema({
     }
   ]
 });
-
 // Exporta o modelo Invoice (Nota Fiscal) baseado no esquema definido
 module.exports = mongoose.model('NotaFiscai', invoiceSchema);
