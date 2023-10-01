@@ -26,4 +26,4 @@ userSchema.pre('save', async function (next) {
 });
 
 // Exporta o modelo User (Usuário) baseado no esquema definido
-module.exports = mongoose.model('Usuários', userSchema);
+module.exports = mongoose.model('Users', userSchema);

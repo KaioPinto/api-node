@@ -30,6 +30,10 @@ app.use(userRoutes);
 const employeeRoutes = require('./routes/employeeRoutes');
 app.use(employeeRoutes);
 
+
+const error = require('../src/middlewares/error');
+app.use(error)
+
 // Inicia o servidor Express e o faz ouvir na porta definida
 app.listen(PORT, () => {
   console.log(`Está rodando na porta ${PORT}`);
