@@ -1,8 +1,22 @@
 // Importa o módulo 'express' e cria um roteador usando 'express.Router()'
 const userRouter = require('express').Router();
+require("express-async-errors");
+
 
 // Importa o controlador de usuários (userControl) que contém as funções de manipulação de usuários
 const userControl = require('../controllers/userControl');
+const { BadRequest } = require('../helpers/apiError');
+
+
+userRouter.route('/').get((req,res) =>{
+  throw new BadRequest('Mensagem')
+})
+
+//Rota para adicionar um produto a seu carrinho
+userRouter.route('/user/adicionar/:id').post((req, res) => {
+  userControl.addTrolley(req, res);
+});
+
 
 //Rota para adicionar um produto a seu carrinho
 userRouter.route('/user/adicionar/:id').post((req, res) => {

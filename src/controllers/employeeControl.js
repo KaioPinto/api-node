@@ -2,16 +2,24 @@
 const Employee = require("../models/Employee");
 const User = require("../models/User");
 const Product = require("../models/Product");
+const Employee = require("../models/Employee");
+const User = require("../models/User");
+const Product = require("../models/Product");
 // Importa as bibliotecas jwt (JSON Web Token) e bcrypt para autenticação e criptografia
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 // Carrega as variáveis de ambiente do arquivo .env
+require("dotenv").config();
 require("dotenv").config();
 const secret = process.env.SECRET;
 
 // Função para gerar um token JWT
 function tokenGenerator(params) {
+function tokenGenerator(params) {
   return jwt.sign({ id: params }, secret, {
+    expiresIn: 86400, // Token expira em 24 horas
     expiresIn: 86400, // Token expira em 24 horas
   });
 }
@@ -57,6 +65,7 @@ exports.createEmployee = async (req, res) => {
     return res.status(500).send({ message: "O registro falhou" });
   }
 };
+};
 
 // Efetua login de um funcionário
 exports.loginEmployee = async (req, res) => {
@@ -67,13 +76,16 @@ exports.loginEmployee = async (req, res) => {
     }
     if (!password) {
       return res.status(406).json({ message: "Digite uma senha" });
+      return res.status(406).json({ message: "Digite uma senha" });
     }
 
     const checkEmployee = await Employee.findOne({ cpf }).select("password");
     if (!checkEmployee) {
       return res.status(404).json({ message: "Usuário não localizado" });
+      return res.status(404).json({ message: "Usuário não localizado" });
     }
     if (!(await bcrypt.compare(password, checkEmployee.password))) {
+      return res.status(400).json({ message: "Senha inválida" });
       return res.status(400).json({ message: "Senha inválida" });
     }
     const data = await Employee.findOne({ cpf }).select('-password -__v -_id');
@@ -112,11 +124,14 @@ exports.getEmployee = async (req, res) => {
 
   try {
     const findEmployee = await Employee.find().select(["-__v", "-_id"]);
+    const findEmployee = await Employee.find().select(["-__v", "-_id"]);
     if (!findEmployee) {
+      return res.status(404).json({ message: "Funcionário não encontrado." });
       return res.status(404).json({ message: "Funcionário não encontrado." });
     }
     res.status(200).json({ "authorized": "Autorizado" });
   } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar o funcionário." });
     res.status(500).json({ error: "Erro ao buscar o funcionário." });
   }
 };
@@ -135,11 +150,20 @@ exports.updateEmployee = async (req, res) => {
         new: true,
       }
     );
+    const updateEmployee = await Employee.findOneAndUpdate(
+      filter,
+      dateEmployee,
+      {
+        new: true,
+      }
+    );
     if (!updateEmployee) {
+      return res.status(404).json({ message: "Usuário não encontrado." });
       return res.status(404).json({ message: "Usuário não encontrado." });
     }
     res.json({ message: `Funcionário ${req.body.name} atualizado.` });
   } catch (error) {
+    res.status(500).json({ error: "Erro ao atualizar o funcionário." });
     res.status(500).json({ error: "Erro ao atualizar o funcionário." });
   }
 };
@@ -147,15 +171,19 @@ exports.updateEmployee = async (req, res) => {
 // Remove um funcionário por ID
 exports.deleteEmployee = async (req, res) => {
   //aqui é para futuramente quando o funcionário tiver cargos, ai será bloqueado e apenas gerentes conseguirão excluir
+  //aqui é para futuramente quando o funcionário tiver cargos, ai será bloqueado e apenas gerentes conseguirão excluir
   try {
     const employeeId = req.body.id;
     const filter = { register: employeeId };
     const deleteEmployee = await Employee.findOneAndRemove(filter);
     if (!deleteEmployee) {
       return res.status(404).json({ message: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
     res.json({ message: "Usuário removido com sucesso." });
+    res.json({ message: "Usuário removido com sucesso." });
   } catch (error) {
+    res.status(500).json({ error: "Erro ao remover o funcionário." });
     res.status(500).json({ error: "Erro ao remover o funcionário." });
   }
 };
@@ -169,9 +197,12 @@ exports.deleteUser = async (req, res) => {
     const delUser = await User.findOneAndRemove({ cpf: userId });
     if (!delUser) {
       return res.status(404).json({ message: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
     res.json({ message: "Usuário removido com sucesso." });
+    res.json({ message: "Usuário removido com sucesso." });
   } catch (error) {
+    res.status(500).json({ error: "Erro ao remover o usuário." });
     res.status(500).json({ error: "Erro ao remover o usuário." });
   }
 };
@@ -180,7 +211,9 @@ exports.deleteUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const listUsers = await User.find().select(["-__v", "-_id"]);
+    const listUsers = await User.find().select(["-__v", "-_id"]);
     if (!listUsers) {
+      return res.status(404).json({ message: "Usuário não encontrado." });
       return res.status(404).json({ message: "Usuário não encontrado." });
     }
     res.json(listUsers);
@@ -197,22 +230,32 @@ exports.getUserID = async (req, res) => {
       return res
         .status(406)
         .json({ message: " Digite o cpf para que a busca ocorra!" });
+      return res
+        .status(406)
+        .json({ message: " Digite o cpf para que a busca ocorra!" });
     }
+    const newEmployee = await User.findOne({ cpf: userID }).select([
+      "-__v",
+      "-_id",
+    ]);
     const newEmployee = await User.findOne({ cpf: userID }).select([
       "-__v",
       "-_id",
     ]);
     if (!newEmployee) {
       return res.status(404).json({ message: "Usuário não encontrado." });
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
     res.json(newEmployee);
   } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar o usuário." });
     res.status(500).json({ error: "Erro ao buscar o usuário." });
   }
 };
 
 // Cria um novo produto
 exports.createProduct = async (req, res) => {
+
 
   try {
     const productDate = req.body;
@@ -234,11 +277,14 @@ exports.createProduct = async (req, res) => {
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find().select(["-__v"]);
+    const products = await Product.find().select(["-__v"]);
     if (!products) {
+      return res.status(404).json({ message: "Produtos não encontrados." });
       return res.status(404).json({ message: "Produtos não encontrados." });
     }
     res.json(products);
   } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os produtos." });
     res.status(500).json({ error: "Erro ao buscar os produtos." });
   }
 };
@@ -248,15 +294,19 @@ exports.getProductById = async (req, res) => {
   try {
     const productId = req.params.id;
     const product = await Product.findById(productId).select(["-__v"]);
+    const product = await Product.findById(productId).select(["-__v"]);
     if (!product) {
+      return res.status(404).json({ message: "Produto não encontrado." });
       return res.status(404).json({ message: "Produto não encontrado." });
     }
     res.json(product);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar o produto pelo ID." });
+    res.status(500).json({ error: "Erro ao buscar o produto pelo ID." });
   }
 };
 
+// Atualiza um produto por ID dependendo do que foi fornecido
 // Atualiza um produto por ID dependendo do que foi fornecido
 exports.updateProduct = async (req, res) => {
   try {
@@ -295,6 +345,7 @@ exports.updateProduct = async (req, res) => {
     return res.json({ "Confirmado": `O produto ${findProduct.item}, foi alterado.` });
   } catch (error) {
     return res.status(500).json({ error: "Erro ao atualizar o produto." });
+    return res.status(500).json({ error: "Erro ao atualizar o produto." });
   }
 };
 
@@ -305,6 +356,7 @@ exports.deleteProduct = async (req, res) => {
    
     const deleteProduct = await Product.findByIdAndRemove(productId);
     if (!deleteProduct) {
+      return res.status(404).json({ message: "Produto não encontrado." });
       return res.status(404).json({ message: "Produto não encontrado." });
     }
     res.json({ "confirme": `Produto ${deleteProduct.name} removido com sucesso.`});

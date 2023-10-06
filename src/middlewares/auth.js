@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
 
 // Middleware de autenticação
@@ -42,6 +43,7 @@ module.exports = (req, res, next) => {
   // Verifica se o token é válido usando a biblioteca jwt e a chave secreta
   jwt.verify(token, secret, (err, decoded) => {
     if (err) {
+      return res.status(401).json({ message: "Token não é válido" });
       return res.status(401).json({ message: "Token não é válido" });
     }
     req.userId = decoded.id; // Se o token for válido, armazena o ID do usuário no objeto de solicitação (req)

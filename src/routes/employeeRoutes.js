@@ -1,11 +1,14 @@
 // Importa o módulo 'express' e cria um roteador usando 'express.Router()'
 const employeeRouter = require("express").Router();
+const employeeRouter = require("express").Router();
 
 // Importa o controlador de funcionários (employeeControl) que contém as funções de manipulação de funcionários
+const employeeControl = require("../controllers/employeeControl");
 const employeeControl = require("../controllers/employeeControl");
 
 // Rota para obter a lista de funcionários
 employeeRouter
+  .route("/employee")
   .route("/employee")
   // Leitura de todos os funcionários
   .get((req, res) => {
@@ -15,6 +18,7 @@ employeeRouter
 // Rota para criar um novo funcionário
 employeeRouter
   .route("/employee/register")
+  .route("/employee/register")
   // Criação de um novo funcionário
   .post((req, res) => {
     employeeControl.createEmployee(req, res);
@@ -22,14 +26,17 @@ employeeRouter
 
 // Rota para login de funcionários
 employeeRouter.route("/employee/login").post((req, res) => {
+employeeRouter.route("/employee/login").post((req, res) => {
   employeeControl.loginEmployee(req, res);
 });
 
 // Rota para criar e obter produtos relacionados aos funcionários
 employeeRouter
   .route("/employee/Product")
+  .route("/employee/Product")
   // Criação de um novo produto
   .post((req, res) => {
+    employeeControl.createProduct(req, res);
     employeeControl.createProduct(req, res);
   })
   // Leitura de todos os produtos
@@ -39,6 +46,7 @@ employeeRouter
 
 // Rotas para produtos específicos com base no ID
 employeeRouter
+  .route("/employee/Product/id")
   .route("/employee/Product/id")
   // Leitura de um produto específico por ID
   .get((req, res) => {
@@ -56,6 +64,7 @@ employeeRouter
 // Rotas para manipulação de informações de usuários
 employeeRouter
   .route("/employee/user/id")
+  .route("/employee/user/id")
   // Exclusão de um usuário por ID
   .delete((req, res) => {
     employeeControl.deleteUser(req, res);
@@ -66,6 +75,9 @@ employeeRouter
   });
 
 // Rota para obter a lista de todos os usuários
+employeeRouter
+  .route("/employee/user")
+  .get((req, res) => employeeControl.getUsers(req, res));
 employeeRouter
   .route("/employee/user")
   .get((req, res) => employeeControl.getUsers(req, res));
