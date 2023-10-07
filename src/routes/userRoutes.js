@@ -4,20 +4,33 @@ const userRouter = require('express').Router();
 // Importa o controlador de usuários (userControl) que contém as funções de manipulação de usuários
 const userControl = require('../controllers/userControl');
 
+//Rota para adicionar um produto a seu carrinho
+userRouter.route('/user/adicionar/:id').post((req, res) => {
+  userControl.addTrolley(req, res);
+});
+
+
 // Rota para registrar um novo usuário
 userRouter.route('/user/register').post((req, res) => {
   userControl.createUser(req, res);
 });
 
-// Rota para realizar uma compra de produto pelo usuário
+// Rota para realizar a compra de produto pelo usuário
 userRouter.route('/user/compra').post((req, res) => {
-  userContro.productBuy(req, res);
+  userControl.productBuy(req, res);
 });
 
 // Rota para fazer login de usuário
 userRouter.route('/user/login').post((req, res) => {
+
   userControl.loginUser(req, res);
 });
+//Rota para remover produto do carrinho
+userRouter.route('/user/removeProduct').delete((req, res) => {
+  userControl.removeProduct(req, res)
+})
+
+
 
 // Rota para obter a lista de todos os usuários
 userRouter
@@ -44,9 +57,11 @@ userRouter
   });
 
 // Exporta o roteador 'userRouter' para ser usado em outras partes da aplicação
-module.exports = userRouter;
 
 // Rota para obter informações de promoção para um usuário específico com base no ID
 userRouter.route('/user/promocao').post((req, res) => {
   userControl.getPromo(req, res);
+
 });
+
+module.exports = userRouter;

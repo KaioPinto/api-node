@@ -1,6 +1,8 @@
 // Importa o módulo 'express' e cria uma instância do aplicativo Express
+
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 // Define a porta em que o aplicativo será executado
 const PORT = 3000;
@@ -18,6 +20,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cors())
 
 // Importa o middleware de autenticação
 const middleware = require('../src/middlewares/auth');
@@ -30,10 +33,19 @@ app.use(userRoutes);
 const employeeRoutes = require('./routes/employeeRoutes');
 app.use(employeeRoutes);
 
+
 // Inicia o servidor Express e o faz ouvir na porta definida
 app.listen(PORT, () => {
   console.log(`Está rodando na porta ${PORT}`);
 });
+
+const corsOptions = {
+  origin: '  http://localhost:3030', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions))
 
 // Obtém as credenciais do banco de dados a partir das variáveis de ambiente
 const dbUser = process.env.DB_USER;
